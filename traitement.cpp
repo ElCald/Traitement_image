@@ -121,6 +121,8 @@ Mat quantification(Mat image, string nomImage, string repertoire){
 /** 
  * Algorithme de réhaussement
  * 
+ * Augmentation du contraste
+ * 
  * On prend des valeur v1 et v2 dans l'histogramme. 
  * Pour v1 on prend la 1ère valeur après les zéro à partir de 0.
  * Pour v2 on prend la dernière valeur avant les zéros entre v2 et 255.
@@ -207,6 +209,10 @@ Mat rehaussement(Mat image, string nomImage, string repertoire){
 /** 
  * Algorithme d'égalisation
  * 
+ * Augmentation de la plage d'intensité de couleur, on passe d'une plage réduite à l'utilisation complète allant de 0 à 255
+ * Ainsi les valeurs sombres deviendront plus sombre et vont tendres vers 0 et les valeurs claires vont être plus claire et tendres vers 255
+ * On applatit donc la courbe afin d'améliorer le contraste
+ * 
  * On crée un histogramme de l'image, qu'on va pondérer.
  * 
  * @param image Image chargé dans le main
@@ -267,6 +273,8 @@ Mat egalisation(Mat image, string nomImage, string repertoire){
 /** 
  * Algorithme d'érosion
  * 
+ * Retire de l'informations sur le bord des formes en grattant des pixels
+ * 
  * On applique une fenêtre (kernel) sur chaque pixel de l'image.
  * Dans l'érosion on applique sur notre pixel, la valeur minimum qui se trouve dans la fenêtre, sachant que l'image doit être binarisée
  * 
@@ -322,6 +330,8 @@ Mat erosion(Mat image, string nomImage, string repertoire){
 /** 
  * Algorithme de dilatation
  * 
+ * Ajoute de l'information sur le bord des formes
+ * 
  * On applique une fenêtre (kernel) sur chaque pixel de l'image.
  * Dans la dilatation on applique sur notre pixel, la valeur maximum qui se trouve dans la fenêtre, sachant que l'image doit être binarisée
  * 
@@ -376,6 +386,8 @@ Mat dilatation(Mat image, string nomImage, string repertoire){
 /** 
  * Algorithme d'ouverture
  * 
+ * Elimine les imperfections
+ * 
  * Application de l'algorithme d'érosion puis de dilatation à notre image.
  * 
  * @param image Image chargé dans le main
@@ -402,6 +414,8 @@ Mat ouverture(Mat image, string nomImage, string repertoire){
 
 /** 
  * Algorithme de fermeture
+ * 
+ * Comble les trous et relie les formes qui sont proches
  * 
  * Application de l'algorithme de dilatation puis d'érosion à notre image.
  * 
@@ -432,6 +446,8 @@ Mat fermeture(Mat image, string nomImage, string repertoire){
 
 /** 
  * Algorithme de moyenne
+ * 
+ * Lissage des textures mais rend flou
  * 
  * On applique une fenêtre (kernel) sur chaque pixel de l'image.
  * Dans la moyenne on applique sur notre pixel, la valeur moyenne qui se trouve dans la fenêtre.
@@ -492,6 +508,9 @@ Mat moyenne(Mat image, string nomImage, string repertoire){
 
 /** 
  * Algorithme gaussien
+ * 
+ * Lissage modéré dépendament de la fenêtre utilisé
+ * On perd moins de détaille que la moyenne
  * 
  * On applique une fenêtre (kernel) sur chaque pixel de l'image.
  * Dans le gaussien on applique sur notre pixel, une fenêtre avec des valeurs qui peuvent être différentes.
@@ -567,6 +586,8 @@ Mat gaussien(Mat image, string nomImage, string repertoire){
 /** 
  * Algorithme minimum
  * 
+ * Contracter les formes lumineuses, permet la détection des ombres et élimine les bruits brillants
+ * 
  * On applique une fenêtre (kernel) sur chaque pixel de l'image.
  * Dans le minimum on applique sur notre pixel, la valeur minimum qui se trouve dans la fenêtre
  * 
@@ -623,6 +644,8 @@ Mat minimum(Mat image, string nomImage, string repertoire){
 /** 
  * Algorithme maximum
  * 
+ * Attenue les taches d'ombre et renforce les points lumineux
+ * 
  * On applique une fenêtre (kernel) sur chaque pixel de l'image.
  * Dans le maximum on applique sur notre pixel, la valeur maximum qui se trouve dans la fenêtre
  * 
@@ -678,6 +701,8 @@ Mat maximum(Mat image, string nomImage, string repertoire){
 
 /** 
  * Algorithme de médianne
+ * 
+ * Elimine le bruit poivre et sel
  * 
  * On applique une fenêtre (kernel) sur chaque pixel de l'image.
  * Dans la medianne on applique sur notre pixel, la valeur medianne qui se trouve dans la fenêtre.
@@ -746,6 +771,8 @@ Mat mediane(Mat image, string nomImage, string repertoire){
 
 /** 
  * Algorithme de Sobel
+ * 
+ * Détection des contours
  * 
  * On applique une fenêtre (kernel) sur chaque pixel de l'image.
  * Dans Sobel on applique sur notre pixel, 2 fenêtres pour traiter les lignes et les colonnes.
@@ -862,6 +889,8 @@ Mat sobel(Mat image, string nomImage, string repertoire){
 /** 
  * Algorithme de Laplacien 1
  * 
+ * Détection des contours
+ * 
  * On applique une fenêtre (kernel) sur chaque pixel de l'image.
  * Dans Laplacien 1 on applique sur notre pixel, 1 fenêtre de Laplacien.
  * 
@@ -935,6 +964,8 @@ Mat laplacien_1(Mat image, string nomImage, string repertoire){
 
 /** 
  * Algorithme de Laplacien 2
+ * 
+ * Détection des contours
  * 
  * On applique une fenêtre (kernel) sur chaque pixel de l'image.
  * Dans Laplacien 2 on applique sur notre pixel, 1 fenêtres de Laplacien.
@@ -1104,7 +1135,9 @@ Mat bilateral(Mat image, string nomImage, string repertoire){
 
 
 
-
+/**
+ * Algorithme de quantification mais pour une image en couleur
+ */
 Mat quantification_couleur(char* nomImage, string repertoire){
 
     int nb_nuance = 32;
