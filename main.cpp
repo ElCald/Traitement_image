@@ -57,14 +57,13 @@ int main(int argc, char* argv[]) {
 
 
 
-    // Lecture de l'image avec un paramètre pour uniquement l'avoir en degrés de gris
+    // Lecture de l'image avec le paramètre "IMREAD_GRAYSCALE" pour uniquement l'avoir en degrés de gris
     Mat image = imread(argv[1], IMREAD_GRAYSCALE);
 
     if (image.empty()) { // Vérification si l'image existe
         cerr << "Erreur de lecture de l'image (main)!" << endl;
         exit(EXIT_FAILURE);
     }
-    
 
 
     // ----------------------- TP01 -----------------------
@@ -84,13 +83,14 @@ int main(int argc, char* argv[]) {
     maximum(image.clone(), nom_image, dir_path);
     mediane(image.clone(), nom_image, dir_path);
     sobel(image.clone(), nom_image, dir_path);
+    sharr(image.clone(), nom_image, dir_path);
     laplacien_1(image.clone(), nom_image, dir_path);
     laplacien_2(image.clone(), nom_image, dir_path);
     bilateral(image.clone(), nom_image, dir_path);
 
 
-    // quantification_couleur(argv[1], dir_path);
-    
+    // ----------------------- TP03 -----------------------
+    // watershed(image.clone(), nom_image, dir_path);
 
 
     return EXIT_SUCCESS;

@@ -22,11 +22,11 @@ Mat minimum(Mat image, string nomImage, string repertoire);
 Mat maximum(Mat image, string nomImage, string repertoire);
 Mat mediane(Mat image, string nomImage, string repertoire);
 Mat sobel(Mat image, string nomImage, string repertoire);
+Mat sharr(Mat image, string nomImage, string repertoire);
 Mat laplacien_1(Mat image, string nomImage, string repertoire);
 Mat laplacien_2(Mat image, string nomImage, string repertoire);
 Mat bilateral(Mat image, string nomImage, string repertoire);
-
-// Mat quantification_couleur(char* nomImage, string repertoire);
+Mat watershed(Mat image, string nomImage, string repertoire);
 
 
 

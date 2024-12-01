@@ -351,8 +351,7 @@ Mat dilatation(Mat image, string nomImage, string repertoire){
     // Parcourir chaque pixel de l'image
     for (int i = 0; i < image.rows; i++) {
         for (int j = 0; j < image.cols; j++) {
-    
-            uchar& pixel = dilated_img.at<uchar>(i, j);
+
 
             // Initialiser la valeur min
             uchar max_value = 0; // Valeur maximale possible pour un pixel en niveaux de gris
@@ -610,7 +609,6 @@ Mat minimum(Mat image, string nomImage, string repertoire){
             uchar& pixel = minimum_img.at<uchar>(i, j);
 
             int min = 255;
-            uchar mean_value = 0;
 
             // Appliquer le kernel
             for (int m = -halfSize; m <= halfSize; m++) {
@@ -668,7 +666,6 @@ Mat maximum(Mat image, string nomImage, string repertoire){
             uchar& pixel = maximum_img.at<uchar>(i, j);
 
             int max = 0;
-            uchar mean_value = 0;
 
             // Appliquer le kernel
             for (int m = -halfSize; m <= halfSize; m++) {
@@ -732,7 +729,6 @@ Mat mediane(Mat image, string nomImage, string repertoire){
             uchar& pixel = mediane_img.at<uchar>(i, j);
 
             int med = 0;
-            uchar mean_value = 0;
             k=0;
 
             // Appliquer le kernel
@@ -787,6 +783,7 @@ Mat sobel(Mat image, string nomImage, string repertoire){
 
     int kernelSize = 3;
     int halfSize = kernelSize / 2;
+
 
     int k=0, l=0;
 
@@ -859,7 +856,7 @@ Mat sobel(Mat image, string nomImage, string repertoire){
                     if (x >= 0 && x < image.cols && y >= 0 && y < image.rows) {
                         uchar pixel_value = image.at<uchar>(y, x);
 
-                        som += fenetre_x[k][l] * pixel_value;
+                        som += fenetre_y[k][l] * pixel_value;
                     }
                     l++;
                 }
@@ -883,6 +880,110 @@ Mat sobel(Mat image, string nomImage, string repertoire){
 
     return sobel_img;
 }// fin sobel
+
+
+
+Mat sharr(Mat image, string nomImage, string repertoire){
+
+    int kernelSize = 3;
+    int halfSize = kernelSize / 2;
+
+
+    int k=0, l=0;
+
+    int fenetre_x[3][3] = {
+        {-3,0,3},
+        {-10,0,10},
+        {-3,0,3}
+    };
+
+
+    int fenetre_y[3][3] = {
+        {-3,-10,-3},
+        {0,0,0},
+        {3,10,3}
+    };
+
+    Mat sharr_img = image.clone();
+
+    // Parcourir chaque pixel de l'image
+    for (int i = 0; i < image.rows; i++) {
+        for (int j = 0; j < image.cols; j++) {
+    
+            uchar& pixel = sharr_img.at<uchar>(i, j);
+
+            int som = 1;
+            uchar mean_value = 0;
+
+            // Appliquer le kernel
+            k=0;
+            for (int m = -halfSize; m <= halfSize; m++) {
+                l=0;
+                for (int n = -halfSize; n <= halfSize; n++) {
+                    int x = j + n;
+                    int y = i + m;
+
+                    // Vérifier les limites de l'image
+                    if (x >= 0 && x < image.cols && y >= 0 && y < image.rows) {
+                        uchar pixel_value = image.at<uchar>(y, x);
+
+                        som += fenetre_x[k][l] * pixel_value;
+                    }
+                    l++;
+                }
+                k++;
+            }
+
+            
+            som = (som < 0) ? 0 : som;
+            som = (som > 255) ? 255 : som;
+            mean_value = som;
+
+            // Stocker la valeur
+            pixel = mean_value;
+
+
+            pixel = sharr_img.at<uchar>(i, j);
+
+            som = 1;
+            mean_value = 0;
+
+            // Appliquer le kernel
+            k=0;
+            for (int m = -halfSize; m <= halfSize; m++) {
+                l=0;
+                for (int n = -halfSize; n <= halfSize; n++) {
+                    int x = j + n;
+                    int y = i + m;
+
+                    // Vérifier les limites de l'image
+                    if (x >= 0 && x < image.cols && y >= 0 && y < image.rows) {
+                        uchar pixel_value = image.at<uchar>(y, x);
+
+                        som += fenetre_y[k][l] * pixel_value;
+                    }
+                    l++;
+                }
+                k++;
+            }
+
+            som = (som < 0) ? 0 : som;
+            som = (som > 255) ? 255 : som;
+            mean_value = som;
+
+            // Stocker la valeur
+            pixel = mean_value;
+        }
+    }
+
+
+
+    string fichier_modifie = repertoire+"sharr-" + string(nomImage);
+    imwrite(fichier_modifie.c_str(), sharr_img); 
+    cout << "Image sobélisée et enregistrée!" << endl;
+
+    return sharr_img;
+}// fin sharr
 
 
 
@@ -1050,6 +1151,11 @@ Mat laplacien_2(Mat image, string nomImage, string repertoire){
  */
 Mat bilateral(Mat image, string nomImage, string repertoire){
 
+
+    /*
+    Des artéfactes se trouvent sur le haut de l'image 
+    */
+
     int kernelSize = 3;
     int halfSize = kernelSize / 2;
     int k = 200; // Constante : Echelle d'influence des voisins (valeur élevé > forte influence donc lissage), val faible < 50 < moyenne < 200 < élevé
@@ -1059,9 +1165,8 @@ Mat bilateral(Mat image, string nomImage, string repertoire){
     double spatial;
     double spectral;
 
+    int** matrice_image = (int**)malloc(sizeof(int*)*image.rows); // matrice de poids
 
-
-    int** matrice_image = (int**)malloc(sizeof(int*)*image.rows);
     for(int i=0; i<image.rows; i++){
         matrice_image[i] = (int*)malloc(sizeof(int)*image.cols);
     }
@@ -1084,6 +1189,7 @@ Mat bilateral(Mat image, string nomImage, string repertoire){
                     if (m != n && x >= 0 && x < bilateral_img.cols && y >= 0 && y < bilateral_img.rows) {
                         uchar pixel_value = bilateral_img.at<uchar>(y, x);
 
+                        // Application de la formule sur chaque case de ma matrice
                         spatial = sqrt(pow(i-x, 2) + pow(j-y, 2));
                         spectral = sqrt(pow(pixel_value - pixel, 2));
 
@@ -1120,7 +1226,8 @@ Mat bilateral(Mat image, string nomImage, string repertoire){
                 }
             }
 
-            pixel = diviseur > 0 ? som / diviseur : pixel;
+            // vérifie que le diviseur n'est pas inferieur ou égale à zéro pour permettre de faire la division 
+            pixel = (diviseur > 0) ? (som / diviseur) : pixel;
 
         }
     }
@@ -1135,39 +1242,92 @@ Mat bilateral(Mat image, string nomImage, string repertoire){
 
 
 
-/**
- * Algorithme de quantification mais pour une image en couleur
+/** 
+ * Algorithme des watershed
+ * 
+ * Segmentation de l'image
+ * On prétraite l'image.
+ * On va trouver les minima, donc les valeurs basses dans l'image
+ * 
+ * @param image Image chargé dans le main
+ * @param nomImage Nom de l'image avec l'extension
+ * @param repertoire Répertoire d'export de l'image générée
+ * @return Clone de la nouvelle image générée
  */
-Mat quantification_couleur(char* nomImage, string repertoire){
+Mat watershed(Mat image, string nomImage, string repertoire){
 
-    int nb_nuance = 32;
+    Mat watershed_img = image.clone();
 
-    // Lecture de l'image avec un paramètre pour uniquement l'avoir en degrés de gris
-    Mat image = imread(nomImage);
+    double seuil = 2.0;
 
-    if (image.empty()) { // Vérification si l'image existe
-        cerr << "Erreur de lecture de l'image !" << endl;
-        exit(EXIT_FAILURE);
+    int** matrice_minima = (int**)malloc(sizeof(int*)*image.rows);
+    for(int i=0; i<image.rows; i++){
+        matrice_minima[i] = (int*)malloc(sizeof(int)*image.cols);
     }
 
+    int** matrice_seuil = (int**)malloc(sizeof(int*)*image.rows);
+    for(int i=0; i<image.rows; i++){
+        matrice_seuil[i] = (int*)calloc(0, sizeof(int)*image.cols);
+    }
+    
 
-    for (int y = 0; y < image.rows; y++) {
-        for (int x = 0; x < image.cols; x++) {
-            
-            Vec3b &color = image.at<Vec3b>(y, x);
+    watershed_img = gaussien(watershed_img, nomImage, repertoire);
 
-            // Modifier les valeurs RGB 
-            color[0] = (color[0]/nb_nuance) * nb_nuance;   
-            color[1] = (color[1]/nb_nuance) * nb_nuance;   
-            color[2] = (color[2]/nb_nuance) * nb_nuance;   
+    watershed_img = sobel(watershed_img, nomImage, repertoire);
 
+
+    //calcul du minima
+    for (int i = 0; i < image.rows; i++) {
+        for (int j = 0; j < image.cols; j++) {
+
+            uchar& pixel = watershed_img.at<uchar>(i, j);
+
+            bool isMin = true;
+
+            for (int di = -1; di <= 1; ++di) {
+                for (int dj = -1; dj <= 1; ++dj) {
+
+                    uchar& pixel_temp = watershed_img.at<uchar>(i + di, j + dj);
+
+                    if ( !(di == 0 && dj == 0) && pixel >= pixel_temp) {
+                        isMin = false;
+                        break;
+                    }
+                }
+
+                if (!isMin) break;
+            }
+
+            matrice_minima[i][j] = isMin ? 1 : 0;
+        
         }
     }
 
 
-    string fichier_modifie = repertoire+"quantification_couleur-" + string(nomImage);
-    imwrite(fichier_modifie.c_str(), image); 
-    cout << "Image quantifiée en couleur et enregistrée!" << endl;
+    //Calcul du seuil
+    for (int i = 0; i < image.rows; i++) {
+        for (int j = 0; j < image.cols; j++) {
+            uchar& pixel = watershed_img.at<uchar>(i, j);
 
-    return image.clone();
-}// fin quantification
+            if (matrice_minima[i][j] == 1 && pixel < seuil) {
+                matrice_seuil[i][j] = 1;
+            }
+        }
+    }
+
+
+
+    // for (int i = 0; i < image.rows; i++) {
+    //     for (int j = 0; j < image.cols; j++) {
+    //         cout << matrice_minima[i][j] << " ";
+    //     }
+    //     cout << endl;
+    // }
+
+
+    string fichier_modifie = repertoire+"watershed-" + string(nomImage);
+    imwrite(fichier_modifie.c_str(), watershed_img); 
+    cout << "Image watershedée et enregistrée!" << endl;
+
+    return watershed_img;
+}// fin watershed

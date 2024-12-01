@@ -4,8 +4,8 @@
 #
 
 EXEC = main
-OBJECTS = traitement.cpp
-PROJECT_NAME = degrés gris
+OBJECTS = traitement.o
+PROJECT_NAME = Traitement d'images
 
 #
 # SUFFIXES
@@ -25,7 +25,7 @@ OBJECTS_O = $(OBJECTS) $(EXEC_O)
 #
 
 CC = g++
-CCFLAGS_STD = -Wall -Werror
+CCFLAGS_STD = -Wall -Werror -O3
 CCFLAGS_DEBUG = -D _DEBUG_
 CCFLAGS = $(CCFLAGS_STD)
 CCLIBS = -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_imgproc
@@ -54,7 +54,7 @@ debug: all
 # DEFAULT RULES
 #
 
-%.o : %.c
+%.o : %.cpp
 	@cd $(dir $<) && ${CC} ${CCFLAGS} -c $(notdir $<) -o $(notdir $@)
 
 #
