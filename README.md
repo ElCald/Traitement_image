@@ -10,7 +10,11 @@ Supporte les extensions basiques : jpg, png
 Si nécessaire sous linux, déplacer le répertoire "opencv2" qui se trouve dans "/usr/include/opencv4/", vers le répertoire "/usr/include", car il est possible que ce répertoire se trouve dans "/opencv4" et donc le compilateur ne trouve pas les fichiers d'en-tête.
 
 #### Compilation
-Makefile : make
+```sh
+make
+```
 
 #### Execution
+```sh
 ./main file/path/file.jpg
+```
