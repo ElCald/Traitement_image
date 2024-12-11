@@ -10,7 +10,3 @@ Compilation avec le makefile : make
 
 
 Execution : ./main file/path/file.jpg
-
-
-
-Eliot CALDERON Y MORA
