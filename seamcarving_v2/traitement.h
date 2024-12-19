@@ -27,12 +27,9 @@ Mat laplacien_1(Mat image, string nomImage, string repertoire);
 Mat laplacien_2(Mat image, string nomImage, string repertoire);
 Mat bilateral(Mat image, string nomImage, string repertoire);
 Mat watershed(Mat image, string nomImage, string repertoire);
-<<<<<<< HEAD
 
 Mat energymap(Mat image, string nomImage, string repertoire);
 // Mat quantification_couleur(char* nomImage, string repertoire);
-=======
->>>>>>> 86af1b99e936edb8df232f7063d1f343402af134
 
 
 
