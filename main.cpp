@@ -71,8 +71,8 @@ int main(int argc, char* argv[]) {
     const int NB_TOUR = 300; // nombre de seams
 
 
-    Mat img_gausse = gaussien(image.clone(), nom_image, dir_path);
-    seamcarving_cols(img_gausse.clone(), NB_TOUR, nom_image, dir_path);
+    Mat new_image = gaussien(image.clone(), nom_image, dir_path);
+    seamcarving_cols(new_image.clone(), NB_TOUR, nom_image, dir_path);
 
 
     return EXIT_SUCCESS;

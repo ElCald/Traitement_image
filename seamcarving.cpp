@@ -9,6 +9,50 @@
 using namespace cv;
 using namespace std;
 
+
+/**
+ * Algorithme négatif
+ * 
+ * On soustrait à 255 la valeur du pixel.
+ * 
+ * @param image Image chargé dans le main
+ * @param nomImage Nom de l'image avec l'extension
+ * @param repertoire Répertoire d'export de l'image générée
+ * @return Clone de la nouvelle image générée
+ */
+Mat negatif(Mat image, string nomImage, string repertoire){
+
+    // Parcours de l'image
+    for (int y = 0; y < image.rows; y++) {
+        for (int x = 0; x < image.cols; x++) {
+
+            // Récupération du pixel de l'image pour le traiter
+            uchar& pixel = image.at<uchar>(y, x);
+
+            // Sauvegarde des valeurs des pixels pour inverser
+            uchar pixel_temp = pixel;
+
+            // Inversion des couleurs
+            pixel = 255 - pixel_temp;   
+  
+
+        }
+    }
+
+
+    // Sauvegarde de l'image
+    string fichier_modifie = repertoire+"/negatif-" + string(nomImage);
+
+    imwrite(fichier_modifie.c_str(), image); // Sauvearde en fichier
+
+    cout << "Image negatif et enregistrée!" << endl;
+
+    return image.clone();
+}// fin negatif
+
+
+
+
 /** 
  * Algorithme gaussien
  * 
@@ -201,18 +245,19 @@ int** matrice_cumulative(Mat image){
 
 /**
  * Recherche du chemin minium du bas vers le haut
- * @return Tableau de taille rows qui contient l'indice de la colonne à supprimer sur chaque ligne
+ * @return true si on a un chemin unique
  */
-int* find_way_cols(Mat image, int** m_cumul){
-
-    int* way = (int*)malloc(sizeof(int) * image.rows); // tableau qui contient le chemin du bas vers le haut de l'image
+bool find_way_cols(const Mat image, int** m_cumul, int**& m_way, const int i_way, bool**& m_bool){
 
     int minimum = INT_MAX;
     int i_minimum = 0;
 
+    int* way = (int*)malloc(sizeof(int) * image.rows); // tableau temporaire du chemin qui sera sauvegardé dans la matrice si c'est un chemin unique
+
+
     // Etape 1 : trouver le minimum dans la dernière ligne
     for(int j=0; j<image.cols; j++){
-        if(m_cumul[image.rows-1][j] < minimum){
+        if(m_bool[image.rows-1][j] == false && m_cumul[image.rows-1][j] < minimum){
             i_minimum = j;
             minimum = m_cumul[image.rows-1][j];
         }
@@ -222,37 +267,57 @@ int* find_way_cols(Mat image, int** m_cumul){
 
 
     int k = 1;
-    // Etape 2 : trouver le minimum des 3 cases au dessus de l'indice précédent
+    // Etape 2 : trouver le minimum des 3 cases au dessus de l'indice précédent et vérifier qu'on ne passe pas par une case déjà occupée
     for(int i=image.rows-2; i>=0; i--){
         minimum = INT_MAX;
-        i_minimum = 0;
+        i_minimum = -1;
 
-
-        if(m_cumul[i][way[k-1]] < minimum){
+        // Au milieu
+        if(m_bool[i][way[k-1]] == false && m_cumul[i][way[k-1]] < minimum){
             minimum = m_cumul[i][way[k-1]];
             i_minimum = way[k-1];
         }
 
         if(way[k-1] > 0){ // Si on est pas sur le bord droit
-            if(m_cumul[i][way[k-1]-1] < minimum){
+            if(m_bool[i][way[k-1]-1] == false && m_cumul[i][way[k-1]-1] < minimum){
                 minimum = m_cumul[i][way[k-1]-1];
                 i_minimum = way[k-1]-1;
             }
         }
 
         if(way[k-1] < image.cols-1){ // Si on est pas sur le bord gauche
-            if(m_cumul[i][way[k-1]+1] < minimum){
+            if(m_bool[i][way[k-1]+1] == false && m_cumul[i][way[k-1]+1] < minimum){
                 minimum = m_cumul[i][way[k-1]+1];
                 i_minimum = way[k-1]+1;
             }
         }
 
+        if(i_minimum != -1){
+            m_bool[image.rows-1][way[0]] = true; // On bloque le chemin
+            // free(way);
+            way[k] = i_minimum;
+            // return false;
+        }
+        else{
+            way[k] = 0;
+        }
 
-        way[k] = i_minimum;
+        
         k++;
     }
 
-    return way;
+    // Etape 3 : sauvegarder dans la matrice m_way le nouveau chemin et tracer le chemin occupé dans m_bool
+    k=0;
+    for(int i=image.rows-1; i>=0; i--){
+        m_way[i_way][k] = way[k];
+        m_bool[i][way[k]] = true;
+        k++;
+    }
+
+
+    free(way);
+
+    return true;
 
 } // fin find_way
 
@@ -263,7 +328,7 @@ int* find_way_cols(Mat image, int** m_cumul){
 void removePixelAndShiftGray(cv::Mat& image, int row, int col) {
     // Vérification des dimensions
     if (row < 0 || row >= image.rows || col < 0 || col >= image.cols) {
-        std::cerr << "Position hors limites!" << std::endl;
+        std::cerr << col << " :Position hors limites!" << std::endl;
         return;
     }
 
@@ -280,16 +345,27 @@ void removePixelAndShiftGray(cv::Mat& image, int row, int col) {
 /**
  * Suppression du chemin sur l'image
  */
-Mat suppression_seam(Mat image, int* way, string nomImage, string repertoire, int seam_type){
+Mat suppression_seam(Mat image, bool** m_bool, int nb_tour, string nomImage, string repertoire, int seam_type){
     Mat reduce_img = image.clone();
 
-    int k=0;
-    if(seam_type == SEAM_COLS){
-        for(int i=reduce_img.rows-1; i>=0; i--){
-            removePixelAndShiftGray(reduce_img, i, way[k]);
-            k++;
+    // int k=0;
+    // for(int j=0; j<nb_tour; j++){
+    //     if(seam_type == SEAM_COLS){
+    //         for(int i=reduce_img.rows-1; i>=0; i--){
+    //             removePixelAndShiftGray(reduce_img, i, m_way[j][k]);
+    //             k++;
+    //         }
+    //     }
+    // }
+
+    for (int i = 0; i < image.rows; i++) { // on commence à la ligne 1
+        for (int j = 0; j < image.cols; j++) {
+            if(m_bool[i][j]){
+                removePixelAndShiftGray(reduce_img, i, j);
+            }
         }
     }
+    
 
     return reduce_img;
 } // fin suppression_colonne
@@ -298,27 +374,30 @@ Mat suppression_seam(Mat image, int* way, string nomImage, string repertoire, in
 /**
  * Traçage du chemin sur l'images
  */
-Mat image_seamed(Mat image, int* way, string nomImage, string repertoire, int seam_type){
-    Mat seamed_img = image.clone();
+Mat image_seamed(Mat image, bool** m_bool, string nomImage, string repertoire, int seam_type){
+    Mat img_seamed = image.clone();
 
-    int k=0;
 
     if(seam_type == SEAM_COLS){
-        for(int i=seamed_img.rows-1; i>=0; i--){
-            uchar& pixel = seamed_img.at<uchar>(i, way[k]);
-            pixel = 255;
-            k++;
+        for (int i = 0; i < img_seamed.rows; i++) { // on commence à la ligne 1
+            for (int j = 0; j < img_seamed.cols; j++) {
+                uchar& pixel_cur = img_seamed.at<uchar>(i, j); // Pixel courant
+
+                if(m_bool[i][j]){
+                    pixel_cur = 255;
+                }
+            }
         }
     }
     else if(seam_type == SEAM_ROWS){
 
     }
-    
+
 
     // string fichier_modifie = repertoire+"seamed_img-" + string(nomImage);
     // imwrite(fichier_modifie.c_str(), seamed_img); 
 
-    return seamed_img;
+    return img_seamed;
 } // fin image_seamed
 
 
@@ -328,13 +407,31 @@ Mat image_seamed(Mat image, int* way, string nomImage, string repertoire, int se
  */
 Mat seamcarving_cols(Mat image, int NB_TOUR, string nomImage, string repertoire){
 
-    int** m = nullptr;
-    int* way = nullptr;
+    int** m = nullptr; // matrice cumulative
+    int** m_way = nullptr; // matrice de tableau qui contient le chemin du bas vers le haut de l'image
+    bool** m_bool = nullptr; // matrice de boolean qui contient les pixels déjà occupés
+
+
+
+    m_way = (int**)malloc(sizeof(int*) * NB_TOUR); 
+    m_bool = (bool**)malloc(sizeof(bool*) * image.rows);
+    for(int i=0; i<image.rows; i++){
+        m_way[i] = (int*)malloc(sizeof(int) * image.rows);
+        m_bool[i] = (bool*)malloc(sizeof(bool) * image.cols);
+    }
+
+    for(int i=0; i<image.rows; i++){
+        for(int j=0; j<image.cols; j++){
+            m_bool[i][j] = false;
+        }
+    }
 
     Mat image_reduce = image.clone();
     Mat img_seamed = image.clone();
     
     Mat image_gradient = filtreGradient(image_reduce.clone(), nomImage, repertoire);
+
+    m = matrice_cumulative(image_gradient);
 
     /**
      * On crée une matrice cumulative à partir de l'image ayant subit un gradient.
@@ -343,19 +440,35 @@ Mat seamcarving_cols(Mat image, int NB_TOUR, string nomImage, string repertoire)
      * On supprime ce chemin dans l'image originale
      * On trace sur l'image originale le chemin supprimé (optionel)
      */
-    for(int i=0; i<NB_TOUR; i++){
-        m = matrice_cumulative(image_gradient);
-        way = find_way_cols(image_gradient, m);
-        image_gradient = suppression_seam(image_gradient.clone(), way, nomImage, repertoire, SEAM_COLS);
-        image_reduce = suppression_seam(image_reduce.clone(), way, nomImage, repertoire, SEAM_COLS);
-        img_seamed = image_seamed(img_seamed.clone(), way, nomImage, repertoire, SEAM_COLS);
-        
-        for(int i=0; i<image.rows; i++){
-            free(m[i]);
+    // for(int i=0; i<NB_TOUR; i++){
+    //     find_way_cols(image_gradient, m, m_way, i, m_bool);
+    //     // image_gradient = suppression_seam(image_gradient.clone(), way, nomImage, repertoire, SEAM_COLS);
+    //     // image_reduce = suppression_seam(image_reduce.clone(), way, nomImage, repertoire, SEAM_COLS);
+    //     // img_seamed = image_seamed(img_seamed.clone(), way, nomImage, repertoire, SEAM_COLS);
+    // }
+    int t=0;
+    int t_stop=0;
+    do{
+        if(find_way_cols(image_gradient, m, m_way, t, m_bool) == true){
+            t++;
         }
-        free(m);
-        free(way);
+        
+        t_stop++;
+    }while(t_stop<100000 && t<NB_TOUR);
+
+    cout << t << endl;
+    cout << t_stop << endl;
+
+    image_reduce = suppression_seam(image_reduce.clone(), m_bool, t, nomImage, repertoire, SEAM_COLS);
+
+    img_seamed = image_seamed(img_seamed.clone(), m_bool, nomImage, repertoire, SEAM_COLS);
+
+
+
+    for(int i=0; i<image.rows; i++){
+        free(m[i]);
     }
+    free(m);
 
 
     // Crop de l'image
@@ -367,7 +480,7 @@ Mat seamcarving_cols(Mat image, int NB_TOUR, string nomImage, string repertoire)
 
     // Enregistrement de l'image crop
     string fichier_modifie = repertoire+"resized_cols-" + string(nomImage);
-    imwrite(fichier_modifie.c_str(), resized_image); 
+    imwrite(fichier_modifie.c_str(), image_reduce); 
     cout << "Image resized et enregistrée!" << endl;
 
     // Enregistrement de l'image contenant les seams
@@ -375,7 +488,7 @@ Mat seamcarving_cols(Mat image, int NB_TOUR, string nomImage, string repertoire)
     imwrite(fichier_modifie.c_str(), img_seamed); 
     cout << "Image seamed et enregistrée!" << endl;
 
-    return resized_image;
+    return image_gradient;
 
 } // fin seamcarving_cols
 

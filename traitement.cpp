@@ -1256,7 +1256,6 @@ Mat energymap(Mat image, string nomImage, string repertoire){
 
 
     // Parcourir chaque pixel de l'image
-
     
     
         for (int i = 2; i < energymap_img.rows-2; i++) {
