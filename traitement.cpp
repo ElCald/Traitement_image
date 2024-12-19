@@ -1242,39 +1242,6 @@ Mat bilateral(Mat image, string nomImage, string repertoire){
 
 
 
-<<<<<<< HEAD
-=======
-/** 
- * Algorithme des watershed
- * 
- * Segmentation de l'image
- * On prétraite l'image.
- * On va trouver les minima, donc les valeurs basses dans l'image
- * 
- * @param image Image chargé dans le main
- * @param nomImage Nom de l'image avec l'extension
- * @param repertoire Répertoire d'export de l'image générée
- * @return Clone de la nouvelle image générée
- */
-Mat watershed(Mat image, string nomImage, string repertoire){
-
-    Mat watershed_img = image.clone();
-
-    double seuil = 2.0;
-
-    int** matrice_minima = (int**)malloc(sizeof(int*)*image.rows);
-    for(int i=0; i<image.rows; i++){
-        matrice_minima[i] = (int*)malloc(sizeof(int)*image.cols);
-    }
->>>>>>> 86af1b99e936edb8df232f7063d1f343402af134
-
-    int** matrice_seuil = (int**)malloc(sizeof(int*)*image.rows);
-    for(int i=0; i<image.rows; i++){
-        matrice_seuil[i] = (int*)calloc(0, sizeof(int)*image.cols);
-    }
-    
-
-<<<<<<< HEAD
 
 Mat energymap(Mat image, string nomImage, string repertoire){
 
@@ -1315,44 +1282,12 @@ Mat energymap(Mat image, string nomImage, string repertoire){
             pixel += min;
             pixel = pixel > 255 ? 255 : pixel;
             min = 255;
-=======
-    watershed_img = gaussien(watershed_img, nomImage, repertoire);
-
-    watershed_img = sobel(watershed_img, nomImage, repertoire);
-
-
-    //calcul du minima
-    for (int i = 0; i < image.rows; i++) {
-        for (int j = 0; j < image.cols; j++) {
-
-            uchar& pixel = watershed_img.at<uchar>(i, j);
-
-            bool isMin = true;
-
-            for (int di = -1; di <= 1; ++di) {
-                for (int dj = -1; dj <= 1; ++dj) {
-
-                    uchar& pixel_temp = watershed_img.at<uchar>(i + di, j + dj);
-
-                    if ( !(di == 0 && dj == 0) && pixel >= pixel_temp) {
-                        isMin = false;
-                        break;
-                    }
-                }
-
-                if (!isMin) break;
-            }
-
-            matrice_minima[i][j] = isMin ? 1 : 0;
-        
->>>>>>> 86af1b99e936edb8df232f7063d1f343402af134
         }
     }
 
     Mat coloredImage;
     applyColorMap(negatif(energymap_img.clone(), nomImage, repertoire), coloredImage, COLORMAP_JET);
 
-<<<<<<< HEAD
 
     string fichier_modifie = repertoire+"energymap-" + string(nomImage);
     imwrite(fichier_modifie.c_str(), energymap_img); 
@@ -1364,32 +1299,3 @@ Mat energymap(Mat image, string nomImage, string repertoire){
 
     return coloredImage;
 }// fin energymap
-=======
-    //Calcul du seuil
-    for (int i = 0; i < image.rows; i++) {
-        for (int j = 0; j < image.cols; j++) {
-            uchar& pixel = watershed_img.at<uchar>(i, j);
-
-            if (matrice_minima[i][j] == 1 && pixel < seuil) {
-                matrice_seuil[i][j] = 1;
-            }
-        }
-    }
-
-
-
-    // for (int i = 0; i < image.rows; i++) {
-    //     for (int j = 0; j < image.cols; j++) {
-    //         cout << matrice_minima[i][j] << " ";
-    //     }
-    //     cout << endl;
-    // }
-
-
-    string fichier_modifie = repertoire+"watershed-" + string(nomImage);
-    imwrite(fichier_modifie.c_str(), watershed_img); 
-    cout << "Image watershedée et enregistrée!" << endl;
-
-    return watershed_img;
-}// fin watershed
->>>>>>> 86af1b99e936edb8df232f7063d1f343402af134
