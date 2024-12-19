@@ -5,7 +5,7 @@
 
 #include "seamcarving.h"
 
-#define NB_PARAM 1
+#define NB_PARAM 3
 
 using namespace std;
 using namespace cv;
@@ -14,7 +14,7 @@ using namespace cv;
 int main(int argc, char* argv[]) {
 
     if(argc != NB_PARAM +1){
-        cerr << "Paramètre : chemin vers l'image" << endl;
+        cerr << "Paramètre : chemin vers l'image, nombre de seams, type (1>cols, 2>rows, 3>both)" << endl;
         exit(EXIT_FAILURE);
     }
 
@@ -65,14 +65,24 @@ int main(int argc, char* argv[]) {
 
     // ----------------------- Projet -----------------------
 
-    cout << "Rows: " << image.rows << endl;
-    cout << "Cols: " << image.cols << endl;
+    Mat img;
 
-    const int NB_TOUR = 300; // nombre de seams
+    int nb_seam = atoi(argv[2]); // nombre de seams
 
+    int type_seam = atoi(argv[3]);
 
-    Mat img_gausse = gaussien(image.clone(), nom_image, dir_path);
-    seamcarving_cols(img_gausse.clone(), NB_TOUR, nom_image, dir_path);
+    switch(type_seam){
+        case 1:
+            img = seamcarving(image.clone(), nb_seam, nom_image, dir_path, SEAM_COLS); break;
+        case 2:
+            img = seamcarving(image.clone(), nb_seam, nom_image, dir_path, SEAM_ROWS); break;
+        case 3:
+            img = seamcarving(image.clone(), nb_seam, nom_image, dir_path, SEAM_COLS); 
+            img = seamcarving(img.clone(), nb_seam, nom_image, dir_path, SEAM_ROWS); break;
+        default:
+            break;
+    }
+
 
 
     return EXIT_SUCCESS;

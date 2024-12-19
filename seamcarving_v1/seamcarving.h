@@ -11,12 +11,15 @@ using namespace std;
 
 Mat gaussien(Mat image, string nomImage, string repertoire);
 Mat filtreGradient(Mat image, string nomImage, string repertoire);
-int** matrice_cumulative(Mat image);
-int* find_way_cols(Mat image, int** m_cumul);
-void removePixelAndShiftGray(cv::Mat& image, int row, int col) ;
-Mat suppression_seam(Mat image, int* way, string nomImage, string repertoire, int seam_type);
-Mat image_seamed(Mat image, int* way, string nomImage, string repertoire, int seam_type);
+inline int** matrice_cumulative_cols(Mat image);
+inline int** matrice_cumulative_rows(Mat image);
+inline int* find_way_cols(Mat image, int** m_cumul);
+inline int* find_way_rows(Mat image, int** m_cumul);
+inline void removePixelAndShiftLeftGray(cv::Mat& image, int row, int col);
+inline void removePixelAndShiftUpGray(cv::Mat& image, int row, int col);
+inline Mat suppression_seam(Mat image, int* way, string nomImage, string repertoire, int seam_type);
+inline Mat image_seamed(Mat image, int* way, string nomImage, string repertoire, int seam_type);
 
-Mat seamcarving_cols(Mat image, int NB_TOUR, string nomImage, string repertoire);
+Mat seamcarving(Mat image, int NB_TOUR, string nomImage, string repertoire, int seam_type);
 
 #endif
