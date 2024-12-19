@@ -52,8 +52,8 @@ Application d'un filtre gaussien afin de lisser l'image et d'un filtre gradient 
 Création d'une matrice cumulative aux dimensions de l'image.
 
 #### Algorithme
-- Initialisation de la 1ère ligne de la matrice avec la 1ère ligne de l'image.
-- Dans la case courante de la matrice, placer la somme du pixel courant et du pixel minimum des 3 pixels au dessus du pixel courant.
+- Initialisation de la 1ère ligne de la matrice avec la 1ère ligne de l'image (ligne 0).
+- À partir de la ligne 1 et en boucle jusqu'en bas de l'image. Dans la case courante de la matrice, placer la somme du pixel courant et du pixel minimum des 3 pixels au dessus du pixel courant de l'image(int).
 - Faire attention aux cas sur les bords droit et gauche, afin de ne pas sortir de l'image pour chercher le pixel minimum.
 
 ### Recherche du chemin minimum
