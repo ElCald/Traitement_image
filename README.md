@@ -43,7 +43,8 @@ make
 - energymap
 
 ## Seam carving
-Algorithme permattant d'éliminer les zones "inutiles" dans une image afin d'en réduire sa taille.
+Algorithme permattant d'éliminer les zones "inutiles" dans une image afin d'en réduire sa taille. <br>
+L'algo présenté est pour la suppréssion de colonnes mais la mécanique est similaire pour la suppression de lignes.
 
 ### Pré-traitement
 Application d'un filtre gaussien afin de lisser l'image et d'un filtre gradient afin de faire ressortir les bords des objets.
@@ -53,7 +54,7 @@ Création d'une matrice cumulative aux dimensions de l'image.
 
 #### Algorithme
 - Initialisation de la 1ère ligne de la matrice avec la 1ère ligne de l'image (ligne 0).
-- À partir de la ligne 1 et en boucle jusqu'en bas de l'image. Dans la case courante de la matrice, placer la somme du pixel courant et du pixel minimum des 3 pixels au dessus du pixel courant de l'image(int).
+- À partir de la ligne 1 et en boucle jusqu'en bas de l'image. Dans la case courante de la matrice, placer la somme du pixel courant et de la case minimum des 3 case au dessus de la case courante de la matrice.
 - Faire attention aux cas sur les bords droit et gauche, afin de ne pas sortir de l'image pour chercher le pixel minimum.
 
 ### Recherche du chemin minimum
@@ -80,15 +81,28 @@ Répéter n fois dans l'ordre.
 
 Il faut toujours utiliser l'image qui est modifiée afin de pouvoir trouver un nouveau chemin minimum.
 
-## Example
+## Example rows
 ![screenshot](Examples/oiseaux.jpg) 
 
-Original <br>
+Original 
 
 ![screenshot](Examples/seamed_cols-oiseaux.jpg)
 
-Paths <br>
+Paths 
 
 ![screenshot](Examples/resized_cols-oiseaux.jpg)
+
+Resized
+
+## Example colums
+![screenshot](Examples/temple.jpg) 
+
+Original 
+
+![screenshot](Examples/seamed_rows-temple.jpg)
+
+Paths 
+
+![screenshot](Examples/resized_rows-temple.jpg)
 
 Resized
