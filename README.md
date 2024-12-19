@@ -77,5 +77,5 @@ Répéter n fois dans l'ordre.
 - Création d'une matrice cumulative de l'image.
 - Rechercher le chemin minimum.
 - Supprimer le chemin minimum.
-<br>
+
 Il faut toujours utiliser l'image qui est modifiée afin de pouvoir trouver un nouveau chemin minimum.
