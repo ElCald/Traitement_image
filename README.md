@@ -73,8 +73,8 @@ Avec le tableau `path`, supprimer le chemin de l'image.
 - Répéter ceci jusqu'en haut de l'image.
 
 ### Algorithme générale
-Répéter n fois dans l'ordre
-- Création d'une matrice cumulative de l'image
-- Rechercher le chemin minimum
-- Supprimer le chemin minimum
+Répéter n fois dans l'ordre.
+- Création d'une matrice cumulative de l'image.
+- Rechercher le chemin minimum.
+- Supprimer le chemin minimum. <br>
 Il faut toujours utiliser l'image qui est modifiée afin de pouvoir trouver un nouveau chemin minimum.
