@@ -3,7 +3,7 @@
 #include <string>
 #include <filesystem>
 
-#include "traitement.h"
+#include "seamcarving.h"
 
 #define NB_PARAM 1
 
@@ -55,9 +55,7 @@ int main(int argc, char* argv[]) {
     }
 
 
-
-
-    // Lecture de l'image avec un paramètre pour uniquement l'avoir en degrés de gris
+    // Lecture de l'image avec le paramètre "IMREAD_GRAYSCALE" pour uniquement l'avoir en degrés de gris
     Mat image = imread(argv[1], IMREAD_GRAYSCALE);
 
     if (image.empty()) { // Vérification si l'image existe
@@ -66,31 +64,16 @@ int main(int argc, char* argv[]) {
     }
     
 
+    // ----------------------- Projet -----------------------
 
-    // ----------------------- TP01 -----------------------
-    binarisation(image.clone(), nom_image, dir_path);
-    negatif(image.clone(), nom_image, dir_path);
-    quantification(image.clone(), nom_image, dir_path);
-    rehaussement(image.clone(), nom_image, dir_path);
-    egalisation(image.clone(), nom_image, dir_path);
-    ouverture(binarisation(image.clone(), nom_image, dir_path), nom_image, dir_path);
-    fermeture(binarisation(image.clone(), nom_image, dir_path), nom_image, dir_path);
+    cout << "Rows: " << image.rows << endl;
+    cout << "Cols: " << image.cols << endl;
+
+    const int NB_TOUR = 300; // nombre de seams
 
 
-    // ----------------------- TP02 -----------------------
-    moyenne(image.clone(), nom_image, dir_path);
-    gaussien(image.clone(), nom_image, dir_path);
-    minimum(image.clone(), nom_image, dir_path);
-    maximum(image.clone(), nom_image, dir_path);
-    mediane(image.clone(), nom_image, dir_path);
-    sobel(image.clone(), nom_image, dir_path);
-    laplacien_1(image.clone(), nom_image, dir_path);
-    laplacien_2(image.clone(), nom_image, dir_path);
-    bilateral(image.clone(), nom_image, dir_path);
-
-
-    // quantification_couleur(argv[1], dir_path);
-    
+    Mat img_gausse = gaussien(image.clone(), nom_image, dir_path);
+    seamcarving_cols(img_gausse.clone(), NB_TOUR, nom_image, dir_path);
 
 
     return EXIT_SUCCESS;

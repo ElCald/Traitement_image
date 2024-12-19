@@ -460,7 +460,7 @@ Mat fermeture(Mat image, string nomImage, string repertoire){
  */
 Mat moyenne(Mat image, string nomImage, string repertoire){
 
-    int kernelSize = 3;
+    int kernelSize = 21;
     int halfSize = kernelSize / 2;
 
     Mat moyenne_img = image.clone();
@@ -788,6 +788,7 @@ Mat sobel(Mat image, string nomImage, string repertoire){
     int kernelSize = 3;
     int halfSize = kernelSize / 2;
 
+
     int k=0, l=0;
 
     int fenetre_x[3][3] = {
@@ -859,7 +860,7 @@ Mat sobel(Mat image, string nomImage, string repertoire){
                     if (x >= 0 && x < image.cols && y >= 0 && y < image.rows) {
                         uchar pixel_value = image.at<uchar>(y, x);
 
-                        som += fenetre_x[k][l] * pixel_value;
+                        som += fenetre_y[k][l] * pixel_value;
                     }
                     l++;
                 }
@@ -883,6 +884,110 @@ Mat sobel(Mat image, string nomImage, string repertoire){
 
     return sobel_img;
 }// fin sobel
+
+
+
+Mat sharr(Mat image, string nomImage, string repertoire){
+
+    int kernelSize = 3;
+    int halfSize = kernelSize / 2;
+
+
+    int k=0, l=0;
+
+    int fenetre_x[3][3] = {
+        {-3,0,3},
+        {-10,0,10},
+        {-3,0,3}
+    };
+
+
+    int fenetre_y[3][3] = {
+        {-3,-10,-3},
+        {0,0,0},
+        {3,10,3}
+    };
+
+    Mat sharr_img = image.clone();
+
+    // Parcourir chaque pixel de l'image
+    for (int i = 0; i < image.rows; i++) {
+        for (int j = 0; j < image.cols; j++) {
+    
+            uchar& pixel = sharr_img.at<uchar>(i, j);
+
+            int som = 1;
+            uchar mean_value = 0;
+
+            // Appliquer le kernel
+            k=0;
+            for (int m = -halfSize; m <= halfSize; m++) {
+                l=0;
+                for (int n = -halfSize; n <= halfSize; n++) {
+                    int x = j + n;
+                    int y = i + m;
+
+                    // Vérifier les limites de l'image
+                    if (x >= 0 && x < image.cols && y >= 0 && y < image.rows) {
+                        uchar pixel_value = image.at<uchar>(y, x);
+
+                        som += fenetre_x[k][l] * pixel_value;
+                    }
+                    l++;
+                }
+                k++;
+            }
+
+            
+            som = (som < 0) ? 0 : som;
+            som = (som > 255) ? 255 : som;
+            mean_value = som;
+
+            // Stocker la valeur
+            pixel = mean_value;
+
+
+            pixel = sharr_img.at<uchar>(i, j);
+
+            som = 1;
+            mean_value = 0;
+
+            // Appliquer le kernel
+            k=0;
+            for (int m = -halfSize; m <= halfSize; m++) {
+                l=0;
+                for (int n = -halfSize; n <= halfSize; n++) {
+                    int x = j + n;
+                    int y = i + m;
+
+                    // Vérifier les limites de l'image
+                    if (x >= 0 && x < image.cols && y >= 0 && y < image.rows) {
+                        uchar pixel_value = image.at<uchar>(y, x);
+
+                        som += fenetre_y[k][l] * pixel_value;
+                    }
+                    l++;
+                }
+                k++;
+            }
+
+            som = (som < 0) ? 0 : som;
+            som = (som > 255) ? 255 : som;
+            mean_value = som;
+
+            // Stocker la valeur
+            pixel = mean_value;
+        }
+    }
+
+
+
+    string fichier_modifie = repertoire+"sharr-" + string(nomImage);
+    imwrite(fichier_modifie.c_str(), sharr_img); 
+    cout << "Image sobélisée et enregistrée!" << endl;
+
+    return sharr_img;
+}// fin sharr
 
 
 
@@ -1050,6 +1155,11 @@ Mat laplacien_2(Mat image, string nomImage, string repertoire){
  */
 Mat bilateral(Mat image, string nomImage, string repertoire){
 
+
+    /*
+    Des artéfactes se trouvent sur le haut de l'image 
+    */
+
     int kernelSize = 3;
     int halfSize = kernelSize / 2;
     int k = 200; // Constante : Echelle d'influence des voisins (valeur élevé > forte influence donc lissage), val faible < 50 < moyenne < 200 < élevé
@@ -1059,9 +1169,8 @@ Mat bilateral(Mat image, string nomImage, string repertoire){
     double spatial;
     double spectral;
 
+    int** matrice_image = (int**)malloc(sizeof(int*)*image.rows); // matrice de poids
 
-
-    int** matrice_image = (int**)malloc(sizeof(int*)*image.rows);
     for(int i=0; i<image.rows; i++){
         matrice_image[i] = (int*)malloc(sizeof(int)*image.cols);
     }
@@ -1084,6 +1193,7 @@ Mat bilateral(Mat image, string nomImage, string repertoire){
                     if (m != n && x >= 0 && x < bilateral_img.cols && y >= 0 && y < bilateral_img.rows) {
                         uchar pixel_value = bilateral_img.at<uchar>(y, x);
 
+                        // Application de la formule sur chaque case de ma matrice
                         spatial = sqrt(pow(i-x, 2) + pow(j-y, 2));
                         spectral = sqrt(pow(pixel_value - pixel, 2));
 
@@ -1120,7 +1230,8 @@ Mat bilateral(Mat image, string nomImage, string repertoire){
                 }
             }
 
-            pixel = diviseur > 0 ? som / diviseur : pixel;
+            // vérifie que le diviseur n'est pas inferieur ou égale à zéro pour permettre de faire la division 
+            pixel = (diviseur > 0) ? (som / diviseur) : pixel;
 
         }
     }
@@ -1135,39 +1246,62 @@ Mat bilateral(Mat image, string nomImage, string repertoire){
 
 
 
-/**
- * Algorithme de quantification mais pour une image en couleur
- */
-Mat quantification_couleur(char* nomImage, string repertoire){
-
-    int nb_nuance = 32;
-
-    // Lecture de l'image avec un paramètre pour uniquement l'avoir en degrés de gris
-    Mat image = imread(nomImage);
-
-    if (image.empty()) { // Vérification si l'image existe
-        cerr << "Erreur de lecture de l'image !" << endl;
-        exit(EXIT_FAILURE);
-    }
 
 
-    for (int y = 0; y < image.rows; y++) {
-        for (int x = 0; x < image.cols; x++) {
+
+Mat energymap(Mat image, string nomImage, string repertoire){
+
+    int kernelSize = 3;
+    int halfSize = kernelSize / 2;
+
+    int k=0;
+
+
+    Mat moy_img = gaussien(image.clone(), nomImage, repertoire);
+    Mat energymap_img = laplacien_2(moy_img, nomImage, repertoire);
+
+
+    // Parcourir chaque pixel de l'image
+
+    
+    
+        for (int i = 2; i < energymap_img.rows-2; i++) {
+            for (int j = 2; j < energymap_img.cols-2; j++) {
+
+            uchar& pixel = energymap_img.at<uchar>(i, j);
+            int min = 255;
+
+            // Appliquer le kernel
+            for (int m = -halfSize; m <= halfSize; m++) {
+                
+                int x = j + m;
+                int y = i - 1;
+
+                uchar pixel_value = energymap_img.at<uchar>(y, x);
+
+                min = pixel_value < min ? pixel_value : min;
             
-            Vec3b &color = image.at<Vec3b>(y, x);
-
-            // Modifier les valeurs RGB 
-            color[0] = (color[0]/nb_nuance) * nb_nuance;   
-            color[1] = (color[1]/nb_nuance) * nb_nuance;   
-            color[2] = (color[2]/nb_nuance) * nb_nuance;   
-
+            }
+ 
+            // Stocker la valeur
+            // pixel = (pixel+min) > 255 ? 255 : (pixel+min);
+            pixel += min;
+            pixel = pixel > 255 ? 255 : pixel;
+            min = 255;
         }
     }
 
+    Mat coloredImage;
+    applyColorMap(negatif(energymap_img.clone(), nomImage, repertoire), coloredImage, COLORMAP_JET);
 
-    string fichier_modifie = repertoire+"quantification_couleur-" + string(nomImage);
-    imwrite(fichier_modifie.c_str(), image); 
-    cout << "Image quantifiée en couleur et enregistrée!" << endl;
 
-    return image.clone();
-}// fin quantification
+    string fichier_modifie = repertoire+"energymap-" + string(nomImage);
+    imwrite(fichier_modifie.c_str(), energymap_img); 
+
+    string fichier_modifie_color = repertoire+"colored_energymap-" + string(nomImage);
+    imwrite(fichier_modifie_color.c_str(), coloredImage); 
+
+    cout << "Image energymap et enregistrée!" << endl;
+
+    return coloredImage;
+}// fin energymap

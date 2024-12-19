@@ -4,7 +4,7 @@
 #
 
 EXEC = main
-OBJECTS = traitement.cpp
+OBJECTS = seamcarving.o
 PROJECT_NAME = degrés gris
 
 #
@@ -25,7 +25,7 @@ OBJECTS_O = $(OBJECTS) $(EXEC_O)
 #
 
 CC = g++
-CCFLAGS_STD = -Wall -Werror
+CCFLAGS_STD = -Wall -Ofast
 CCFLAGS_DEBUG = -D _DEBUG_
 CCFLAGS = $(CCFLAGS_STD)
 CCLIBS = -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_imgproc
@@ -54,7 +54,7 @@ debug: all
 # DEFAULT RULES
 #
 
-%.o : %.c
+%.o : %.cpp
 	@cd $(dir $<) && ${CC} ${CCFLAGS} -c $(notdir $<) -o $(notdir $@)
 
 #
