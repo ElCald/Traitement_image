@@ -4,8 +4,13 @@
 #
 
 EXEC = main
+<<<<<<< HEAD
 OBJECTS = seamcarving.o
 PROJECT_NAME = degrés gris
+=======
+OBJECTS = traitement.o
+PROJECT_NAME = Traitement d'images
+>>>>>>> 86af1b99e936edb8df232f7063d1f343402af134
 
 #
 # SUFFIXES
@@ -25,7 +30,11 @@ OBJECTS_O = $(OBJECTS) $(EXEC_O)
 #
 
 CC = g++
+<<<<<<< HEAD
 CCFLAGS_STD = -Wall -Ofast
+=======
+CCFLAGS_STD = -Wall -Werror -O2
+>>>>>>> 86af1b99e936edb8df232f7063d1f343402af134
 CCFLAGS_DEBUG = -D _DEBUG_
 CCFLAGS = $(CCFLAGS_STD)
 CCLIBS = -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_imgproc

@@ -55,6 +55,11 @@ int main(int argc, char* argv[]) {
     }
 
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 86af1b99e936edb8df232f7063d1f343402af134
     // Lecture de l'image avec le paramètre "IMREAD_GRAYSCALE" pour uniquement l'avoir en degrés de gris
     Mat image = imread(argv[1], IMREAD_GRAYSCALE);
 
@@ -62,7 +67,6 @@ int main(int argc, char* argv[]) {
         cerr << "Erreur de lecture de l'image (main)!" << endl;
         exit(EXIT_FAILURE);
     }
-    
 
     // ----------------------- Projet -----------------------
 
@@ -72,8 +76,26 @@ int main(int argc, char* argv[]) {
     const int NB_TOUR = 300; // nombre de seams
 
 
+<<<<<<< HEAD
     Mat img_gausse = gaussien(image.clone(), nom_image, dir_path);
     seamcarving_cols(img_gausse.clone(), NB_TOUR, nom_image, dir_path);
+=======
+    // ----------------------- TP02 -----------------------
+    moyenne(image.clone(), nom_image, dir_path);
+    gaussien(image.clone(), nom_image, dir_path);
+    minimum(image.clone(), nom_image, dir_path);
+    maximum(image.clone(), nom_image, dir_path);
+    mediane(image.clone(), nom_image, dir_path);
+    sobel(image.clone(), nom_image, dir_path);
+    sharr(image.clone(), nom_image, dir_path);
+    laplacien_1(image.clone(), nom_image, dir_path);
+    laplacien_2(image.clone(), nom_image, dir_path);
+    bilateral(image.clone(), nom_image, dir_path);
+
+
+    // ----------------------- TP03 -----------------------
+    // watershed(image.clone(), nom_image, dir_path);
+>>>>>>> 86af1b99e936edb8df232f7063d1f343402af134
 
 
     return EXIT_SUCCESS;
