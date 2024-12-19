@@ -49,7 +49,7 @@ Algorithme permattant d'éliminer les zones "inutiles" dans une image afin d'en 
 Application d'un filtre gaussien afin de lisser l'image et d'un filtre gradient afin de faire ressortir les bords des objets.
 
 ### Matrice cumulative
-Création d'une matrice cumulative.
+Création d'une matrice cumulative aux dimensions de l'image.
 
 #### Algorithme
 - Initialisation de la 1ère ligne de la matrice avec la 1ère ligne de l'image.
@@ -57,7 +57,7 @@ Création d'une matrice cumulative.
 - Faire attention aux cas sur les bords droit et gauche, afin de ne pas sortir de l'image pour chercher le pixel minimum.
 
 ### Recherche du chemin minimum
-Avec la matrice cumulative rechercher les chemins minimum de l'image.
+Avec la matrice cumulative rechercher le chemin minimum de l'image.
 
 #### Algorithme
 - Parcourir la dernière ligne pour trouver l'indice de la valeur minimum et l'ajouter à un tableau `path` de la taille de la hauteur de l'image.
@@ -76,5 +76,6 @@ Avec le tableau `path`, supprimer le chemin de l'image.
 Répéter n fois dans l'ordre.
 - Création d'une matrice cumulative de l'image.
 - Rechercher le chemin minimum.
-- Supprimer le chemin minimum. <br>
+- Supprimer le chemin minimum.
+
 Il faut toujours utiliser l'image qui est modifiée afin de pouvoir trouver un nouveau chemin minimum.
