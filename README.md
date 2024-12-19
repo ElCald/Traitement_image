@@ -60,14 +60,21 @@ Création d'une matrice cumulative.
 Avec la matrice cumulative rechercher les chemins minimum de l'image.
 
 #### Algorithme
-- Parcourir la dernière ligne pour trouver l'indice de la valeur minimum et l'ajouter à un tableau "path" de la taille de la hauteur de l'image.
+- Parcourir la dernière ligne pour trouver l'indice de la valeur minimum et l'ajouter à un tableau `path` de la taille de la hauteur de l'image.
 - À partir de cet indice rechercher parmis les 3 pixels au dessus, le pixel minimum, l'ajouter au tableau "path" et prendre ce pixel comme référence d'indice de recherche.
 - Répéter jusqu'en haut de l'image.
 
 ### Suppression du chemin minimum
-Avec le tableau "path", supprimer le chemin de l'image.
+Avec le tableau `path`, supprimer le chemin de l'image.
 
 #### Algorithme
-- Parcourir le tableau path et supprimer le pixel à l'indice i et à la valeur de la case i deu tableau "path"
+- Parcourir le tableau `path` et supprimer le pixel à l'indice i et à la valeur de la case i deu tableau `path`
 - Décaler tous les pixels de l'image vers la droite ou la gauche.
 - Répéter ceci jusqu'en haut de l'image.
+
+### Algorithme générale
+Répéter n fois dans l'ordre
+- Création d'une matrice cumulative de l'image
+- Rechercher le chemin minimum
+- Supprimer le chemin minimum
+Il faut toujours utiliser l'image qui est modifiée afin de pouvoir trouver un nouveau chemin minimum.
