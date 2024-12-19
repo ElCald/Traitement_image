@@ -79,3 +79,16 @@ Répéter n fois dans l'ordre.
 - Supprimer le chemin minimum.
 
 Il faut toujours utiliser l'image qui est modifiée afin de pouvoir trouver un nouveau chemin minimum.
+
+## Example
+![screenshot](Examples/oiseaux.jpg) 
+
+Original <br>
+
+![screenshot](Examples/seamed_cols-oiseaux.jpg)
+
+Paths <br>
+
+![screenshot](Examples/resized_cols-oiseaux.jpg)
+
+Resized
