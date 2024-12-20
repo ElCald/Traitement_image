@@ -17,7 +17,7 @@ make
 
 #### Execution
 ```sh
-./main file/path/file.jpg
+./main path/path/file.jpg
 ```
 
 ## Filtres
@@ -92,7 +92,7 @@ make
 - seam : nombre de seams (chemin) à retirer
 - type : 1 > colonnes | 2 > lignes | 3 > colonnes + lignes
 ```sh
-./main file/path/file.jpg 300 1
+./main path/path/file.jpg 300 1
 ```
 
 Pour le seam carving en couleur : [Colored seamcarving](https://github.com/clem1408/CHPS0703-Project)
