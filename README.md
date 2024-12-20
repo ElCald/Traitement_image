@@ -81,6 +81,20 @@ Répéter n fois dans l'ordre.
 
 Il faut toujours utiliser l'image qui est modifiée afin de pouvoir trouver un nouveau chemin minimum.
 
+#### Compilation
+```sh
+make
+```
+
+#### Execution
+- main : fichier principale d'exécution
+- path : chemin vers l'image
+- seam : nombre de seams (chemin) à retirer
+- type : 1 > colonnes | 2 > lignes | 3 > colonnes + lignes
+```sh
+./main file/path/file.jpg 300 1
+```
+
 ## Example rows
 ![screenshot](Examples/oiseaux.jpg) 
 
