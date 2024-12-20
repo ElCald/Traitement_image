@@ -42,7 +42,7 @@ make
 - bilatéralisation
 - energymap
 
-## Seam carving
+## Seam carving gray
 Algorithme permattant d'éliminer les zones "inutiles" dans une image afin d'en réduire sa taille. <br>
 L'algo présenté est pour la suppréssion de colonnes mais la mécanique est similaire pour la suppression de lignes.
 
@@ -94,6 +94,8 @@ make
 ```sh
 ./main file/path/file.jpg 300 1
 ```
+
+Pour le seam carving en couleur > [Colored seamcarving](https://github.com/clem1408/CHPS0703-Project)
 
 ## Example rows
 ![screenshot](Examples/oiseaux.jpg) 
