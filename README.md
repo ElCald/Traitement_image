@@ -95,7 +95,7 @@ make
 ./main file/path/file.jpg 300 1
 ```
 
-Pour le seam carving en couleur > [Colored seamcarving](https://github.com/clem1408/CHPS0703-Project)
+Pour le seam carving en couleur : [Colored seamcarving](https://github.com/clem1408/CHPS0703-Project)
 
 ## Example rows
 ![screenshot](Examples/oiseaux.jpg) 
