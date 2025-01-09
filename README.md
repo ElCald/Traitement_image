@@ -43,7 +43,7 @@ make
 - energymap
 
 ## Seam carving gray
-Algorithme permattant d'éliminer les zones "inutiles" dans une image afin d'en réduire sa taille. <br>
+Algorithme permattant d'éliminer les zones à faible densité d'information dans une image afin d'en réduire sa taille. <br>
 L'algo présenté est pour la suppréssion de colonnes mais la mécanique est similaire pour la suppression de lignes.
 
 ### Pré-traitement
