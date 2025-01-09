@@ -43,6 +43,7 @@ make
 - energymap
 
 ## Seam carving gray
+*Collaborators : [clem1408](https://github.com/clem1408) & [kakugen](https://github.com/KaKug3n)*
 Algorithme permattant d'éliminer les zones à faible densité d'information dans une image afin d'en réduire sa taille. <br>
 L'algo présenté est pour la suppréssion de colonnes mais la mécanique est similaire pour la suppression de lignes.
 
