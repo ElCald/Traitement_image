@@ -4,7 +4,7 @@ CHPS0703 - Imagerie
 ### Informations
 **Nécessite d'installer la bibliothèque OpenCV.**
 
-À l'execution, le porgramme va créer un répertoire `/images` à la racine et à l'intérieur un répertoire avec le nom de l'image. <br>
+À l'execution, le programme va créer un répertoire `/images` à la racine et à l'intérieur un répertoire avec le nom de l'image. <br>
 Supporte les extensions basiques : jpg, png.
 
 Si nécessaire sous Linux, déplacer le répertoire `opencv2` qui se trouve dans `/usr/include/opencv4/`, vers le répertoire `/usr/include`, car il est possible que ce répertoire se trouve dans `/opencv4` et donc le compilateur ne trouve pas les fichiers d'en-tête.
